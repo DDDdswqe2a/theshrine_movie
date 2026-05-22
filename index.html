@@ -4,8 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>신사 : 악귀의 속삭임 | 御神籤</title>
-<meta property="og:title" content="신사 : 악귀의 속삭임 | 운명의 제비">
-<meta property="og:description" content="무언가 들리기 시작했다... 신사에서 당신의 운세를 뽑아라.">
+<meta property="og:title" content="오미쿠지 운세 테스트 ＜신사: 악귀의 속삭임＞">
+<meta property="og:description" content="무언가 들리기 시작했다⛩️ 신사 운세 뽑고 일본 고베가자! ✈️">
+<meta property="og:url" content="https://theshrine-movie.vercel.app/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="오미쿠지 운세 테스트 ＜신사: 악귀의 속삭임＞">
+<meta name="twitter:description" content="무언가 들리기 시작했다⛩️ 신사 운세 뽑고 일본 고베가자! ✈️">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -821,7 +826,7 @@ function reset(){
 async function openShare(){
   track('share_click','link',curRank);
   const url=location.href;
-  const shareText=`[신사 : 악귀의 속삭임]\n무언가 들리기 시작했다...\n내 운세: ${curRank}\n${curText}\n\n당신의 운세는? 👇\n${url}`;
+  const shareText=`[신사 : 악귀의 속삭임]\n무언가 들리기 시작했다...\n내 운세: ${curRank}\n${curText}\n\n당신의 운세는? 🎋\n오미쿠지 운세 뽑고 일본 항공권 받아가세요 ✨\n${url}`;
   if(navigator.share){
     try{await navigator.share({title:'신사 : 악귀의 속삭임',text:shareText,url});}
     catch(e){}

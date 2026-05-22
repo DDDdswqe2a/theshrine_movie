@@ -16,6 +16,11 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:title" content="오미쿠지 운세 테스트 ＜신사: 악귀의 속삭임＞">
+<meta property="og:description" content="무언가 들리기 시작했다⛩️ 신사 운세 뽑고 일본 고베가자! ✈️">
+<meta property="og:url" content="https://theshrine-movie.vercel.app/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
 <title>이벤트 응모 | 신사 악귀의 속삭임</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -112,17 +117,29 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .success-msg{font-size:13px;letter-spacing:.18em;color:var(--dim);line-height:2.3;}
 .success-fortune{display:inline-block;font-family:'Shippori Mincho',serif;font-size:30px;color:var(--red-b);margin:8px 0;}
 .shrine-more-btn{
-  display:inline-block;
+  display:block;
+  width:100%;max-width:360px;
   background:var(--blood);border:none;
   color:#fce0d0;font-family:'Shippori Mincho',serif;
   font-size:13px;letter-spacing:.3em;
-  padding:14px 36px;text-decoration:none;
+  padding:14px 0;text-align:center;text-decoration:none;
   transition:all .3s;margin-top:4px;
   box-shadow:0 0 20px rgba(139,32,32,.25);
 }
 .shrine-more-btn:hover{background:var(--red);color:white;}
 .success-back{display:inline-block;margin-top:20px;font-size:11px;letter-spacing:.35em;color:var(--grey);text-decoration:none;border-bottom:1px solid #5a3030;padding-bottom:4px;transition:color .3s;}
 .success-back:hover{color:var(--dim);}
+.success-share-btn{
+  width:100%;max-width:360px;
+  background:none;
+  border:1px solid var(--blood);
+  color:var(--dim);
+  font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:13px;letter-spacing:.15em;
+  padding:14px;cursor:pointer;
+  transition:all .3s;margin-top:0;
+}
+.success-share-btn:hover{background:rgba(139,32,32,.18);color:var(--paper);}
 
 /* Dividers */
 .hero-line{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--blood),transparent);position:relative;margin-bottom:32px;}
@@ -219,7 +236,8 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
       <p style="font-size:10px;letter-spacing:.3em;color:var(--grey);">당신의 운세</p>
       <p class="success-fortune" id="successFortune"></p>
     </div>
-    <a href="https://litt.ly/theshrine_movie" target="_blank" class="shrine-more-btn">〈신사: 악귀의 속삭임〉 더 알아보기</a>
+    <a href="https://m.site.naver.com/28BNi" target="_blank" class="shrine-more-btn">〈신사: 악귀의 속삭임〉 더 알아보기</a>
+    <button class="success-share-btn" onclick="shareResult()">오늘의 운세 결과 공유하기</button>
     <a class="success-back" href="index.html">← 처음으로 돌아가기</a>
   </div>
 </div>
@@ -310,6 +328,27 @@ async function submitForm() {
   document.getElementById('successFortune').textContent = fortune;
   document.getElementById('successPage').classList.add('show');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function shareResult() {
+  let fortune = '—', fortuneText = '';
+  try {
+    const f = JSON.parse(localStorage.getItem('fortune') || 'null');
+    if (f) { fortune = f.rank; fortuneText = f.text; }
+  } catch(e) {}
+  const url = 'https://theshrine-movie.vercel.app/';
+  const shareText = `[신사 : 악귀의 속삭임]\n무언가 들리기 시작했다...\n내 운세: ${fortune}\n${fortuneText}\n\n당신의 운세는? 🎋\n오미쿠지 운세 뽑고 일본 항공권 받아가세요 ✨\n${url}`;
+  if (navigator.share) {
+    try { await navigator.share({ title:'신사 : 악귀의 속삭임', text:shareText, url }); } catch(e) {}
+    return;
+  }
+  try { await navigator.clipboard.writeText(url); } catch {
+    const t = document.createElement('textarea');
+    t.value = url; t.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(t); t.select();
+    document.execCommand('copy'); document.body.removeChild(t);
+  }
+  alert('링크가 복사됐어요! 📋');
 }
 </script>
 </body>
