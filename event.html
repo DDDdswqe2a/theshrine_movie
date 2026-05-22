@@ -284,6 +284,17 @@ async function submitForm() {
     if (f) { fortune = f.rank; fortuneText = f.text; }
   } catch(e) {}
 
+  const marketing = document.getElementById('consent-marketing')?.checked || false;
+  const device    = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+
+  const payload = {
+    action: 'register',
+    name, contact, email,
+    fortune, fortuneText,
+    marketing: marketing ? '동의' : '미동의',
+    device
+  };
+
   const btn = document.getElementById('submitBtn');
   btn.disabled = true; btn.textContent = '응모 중...';
 
