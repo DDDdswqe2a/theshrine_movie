@@ -70,7 +70,7 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
 /* 모바일 이벤트 CTA */
 .mobile-event-cta{
   display:flex;align-items:center;justify-content:center;gap:10px;
-  width:100%;max-width:420px;
+  width:100%;max-width:480px;
   background:var(--blood);
   border:1px solid #cc3030;
   padding:14px 20px;
@@ -132,10 +132,13 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
   opacity:0;
   animation:fup .8s 1.1s forwards;
   margin-top:6px;
-  padding:16px 32px;
+  padding:16px 0;
   font-size:12px;
   letter-spacing:.2em;
   font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  width:100%;
+  max-width:480px;
+  text-align:center;
 }
 .result-learn{
   display:block;width:100%;text-align:center;margin-top:0;
@@ -180,13 +183,15 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
 .blood-div::before{content:'●';position:absolute;left:50%;transform:translate(-50%,-50%);color:var(--blood);font-size:8px;}
 
 /* 뽑기 섹션 */
-.draw-section{display:flex;flex-direction:column;align-items:center;gap:13px;width:100%;opacity:0;animation:fup .8s 1.0s forwards;}
+.draw-section{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;opacity:0;animation:fup .8s 1.0s forwards;}
 
 .draw-prompt{
-  font-size:15px;letter-spacing:.3em;
+  font-size:15px;letter-spacing:.2em;
   color:var(--mid);
   text-align:center;
   text-shadow:0 1px 8px rgba(0,0,0,.5);
+  line-height:1.9;
+  margin-bottom:16px;
 }
 
 /* 오미쿠지 통 */
@@ -278,6 +283,7 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
   width:100%;
   max-width:520px;
   margin:0 auto;
+  box-sizing:border-box;
 }
 .action-row-3 .btn-event,
 .action-row-3 .btn-share,
@@ -287,10 +293,12 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
   align-items:center;
   justify-content:center;
   text-align:center;
-  padding:18px 6px;
+  padding:18px 4px;
   font-size:12px;
-  letter-spacing:.12em;
-  white-space:nowrap;
+  letter-spacing:.08em;
+  white-space:normal;
+  word-break:keep-all;
+  line-height:1.4;
 }
 
 .btn-share{
@@ -322,11 +330,13 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
 .btn-ghost:hover{border-color:var(--mid);color:var(--dim);}
 
 .back-btn{
-  display:inline-flex;align-items:center;gap:7px;
+  display:block;
   color:var(--mid);font-size:11px;letter-spacing:.35em;
-  text-decoration:none;padding:12px 0 6px;
+  text-decoration:none;padding:14px 0 4px;
   transition:color .3s;
   font-family:'Noto Serif KR',serif;
+  text-align:left;
+  width:100%;
 }
 .back-btn:hover{color:var(--dim);}
 
@@ -390,7 +400,7 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
   .action-row-3{gap:5px;max-width:100%;}
   .action-row-3 .btn-event,
   .action-row-3 .btn-share,
-  .action-row-3 .btn-ghost{padding:20px 3px;font-size:11px;letter-spacing:.05em;}
+  .action-row-3 .btn-ghost{padding:16px 3px;font-size:11px;letter-spacing:.03em;white-space:normal;word-break:keep-all;line-height:1.4;}
   .result-learn{font-size:13px;padding:20px 6px;}
 }
 </style>
@@ -422,7 +432,7 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
 
   <!-- 뽑기 섹션 -->
   <section class="draw-section" id="drawSection">
-    <p class="draw-prompt">눈을 감고 마음속으로 오늘의 물음을 품으세요</p>
+    <p class="draw-prompt">눈을 감고 마음속으로<br>오늘의 물음을 품으세요</p>
 
     <div class="omikuji-box" id="box" onclick="draw()">
       <div class="box-lid"></div>
@@ -571,7 +581,7 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:1;}
 
 
 // 트래킹
-const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdzHO_830n9SYHTvanX0uZDBaNddSWuFuBA5xWvw16NSb_HHpVRVFbNXo074kF0kcltw/exec';
 const device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
 const startTime = Date.now();
 function track(event, detail='', fortune='', dwell='') {
