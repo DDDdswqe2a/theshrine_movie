@@ -118,6 +118,30 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 .submit-btn:disabled{opacity:.35;cursor:not-allowed;}
 .form-note{font-size:10px;letter-spacing:.2em;color:var(--grey);text-align:center;line-height:2.1;margin-top:12px;}
 
+/* 유의사항 박스 */
+.notice-box{
+  margin-top:32px;padding:20px 18px 22px;
+  border:1px solid var(--border-soft, #3a2424);
+  background:rgba(0,0,0,.25);
+  font-family:'Pretendard',system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+.notice-title{
+  font-size:12px;letter-spacing:.2em;color:var(--paper);
+  font-weight:600;margin-bottom:14px;text-align:left;
+}
+.notice-section{
+  font-size:11px;letter-spacing:.06em;color:#caa84c;
+  font-weight:600;margin-top:12px;margin-bottom:4px;
+}
+.notice-section:first-of-type{margin-top:0;}
+.notice-line{
+  font-size:10.5px;line-height:1.7;color:var(--dim);
+  letter-spacing:.02em;word-break:keep-all;
+  padding-left:2px;
+}
+.notice-line a{color:#e8b4b4;text-decoration:underline;}
+.notice-line a:hover{color:var(--red-b);}
+
 /* Success */
 .success-page{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--black);z-index:999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;gap:20px;overflow-y:auto;box-sizing:border-box;}
 .success-page.show{display:flex;}
@@ -243,6 +267,28 @@ body.success-shown .site-footer{display:none;}
 
       <button class="submit-btn" id="submitBtn" onclick="submitForm()" disabled>응모하기</button>
       <p class="form-note">수집된 개인정보는 이벤트 당첨자 선정 및 경품 발송 목적으로만 사용됩니다</p>
+
+      <div class="notice-box">
+        <p class="notice-title">※ 유의사항</p>
+
+        <p class="notice-section">[참여 관련]</p>
+        <p class="notice-line">- 본 이벤트는 하루 1회 참여 가능합니다.</p>
+        <p class="notice-line">- 비정상적인 방법을 통한 참여는 금지되며, 적발 시 당첨이 취소될 수 있습니다.</p>
+
+        <p class="notice-section">[당첨 관련]</p>
+        <p class="notice-line">- 당첨자는 추첨 후 개별 연락 예정입니다.</p>
+        <p class="notice-line">- 당첨 안내 후 일정 기간 내 미응답 시 당첨이 취소될 수 있습니다.</p>
+        <p class="notice-line">- 당첨자 본인 확인 절차가 진행될 수 있습니다.</p>
+
+        <p class="notice-section">[경품 관련]</p>
+        <p class="notice-line">- 경품 수령을 위한 개인정보 제공에 동의하셔야 합니다.</p>
+        <p class="notice-line">- 경품은 주최사의 사정에 따라 변경될 수 있으며, 타인 양도가 불가능합니다.</p>
+        <p class="notice-line">- 제세공과금(22%)은 당첨자 본인 부담입니다.</p>
+
+        <p class="notice-section">[기타]</p>
+        <p class="notice-line">- 본 이벤트는 사정에 따라 조기 종료될 수 있습니다.</p>
+        <p class="notice-line">- 이벤트 관련 문의: <a href="mailto:pr@librarycompany.co.kr">pr@librarycompany.co.kr</a></p>
+      </div>
     </div>
   </div>
 
