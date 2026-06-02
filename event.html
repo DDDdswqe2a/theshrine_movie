@@ -270,13 +270,41 @@ body.success-shown .site-footer{display:none;}
 </footer>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdzHO_830n9SYHTvanX0uZDBaNddSWuFuBA5xWvw16NSb_HHpVRVFbNXo074kF0kcltw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyH25aSDuEI-8DWiTfYVGJb6UKTNP1s0w_ridsg-ZeD3_ZAWCv8RGULbBwzGQwQFVWYeQ/exec';
+
+// 유입 채널 자동 분류
+function detectChannel() {
+  const ref = document.referrer || '';
+  const ua = navigator.userAgent || '';
+  const params = new URLSearchParams(location.search);
+  const utm = params.get('utm_source');
+  if (utm) return utm.toLowerCase();
+  if (/KAKAOTALK/i.test(ua)) return 'kakaotalk';
+  if (/Instagram/i.test(ua)) return 'instagram';
+  if (/FBAN|FBAV|FB_IAB/i.test(ua)) return 'facebook';
+  if (/NAVER\(inapp/i.test(ua) || /Naver/i.test(ua)) return 'naver';
+  if (/Line\//i.test(ua)) return 'line';
+  if (!ref) return 'direct';
+  try {
+    const h = new URL(ref).hostname.toLowerCase();
+    if (h.includes('google')) return 'google';
+    if (h.includes('naver')) return 'naver';
+    if (h.includes('daum') || h.includes('kakao')) return 'kakao';
+    if (h.includes('instagram')) return 'instagram';
+    if (h.includes('facebook') || h.includes('fb.')) return 'facebook';
+    if (h.includes('youtube')) return 'youtube';
+    if (h.includes('twitter') || h.includes('t.co') || h.includes('x.com')) return 'twitter';
+    if (h.includes('theshrine-movie')) return 'internal';
+    return h;
+  } catch(e) { return 'unknown'; }
+}
+const CHANNEL = detectChannel();
 const device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
 const startTime = Date.now();
 
 function track(event, detail='', fortune='') {
   if (!SCRIPT_URL || SCRIPT_URL.includes('YOUR_')) return;
-  const p = new URLSearchParams({ action:'track', event, detail, fortune, device, ref:document.referrer||'direct' });
+  const p = new URLSearchParams({ action:'track', event, detail, fortune, device, channel:CHANNEL, ref:document.referrer||'direct', page:location.pathname });
   fetch(`${SCRIPT_URL}?${p}`, { mode:'no-cors' }).catch(()=>{});
 }
 
@@ -296,7 +324,7 @@ window.addEventListener('load', () => {
 
 window.addEventListener('pagehide', () => {
   const dwell = Math.round((Date.now() - startTime) / 1000);
-  const p = new URLSearchParams({ action:'track', event:'event_page_exit', dwell, device });
+  const p = new URLSearchParams({ action:'track', event:'event_page_exit', dwell, device, channel:CHANNEL, ref:document.referrer||'direct', page:location.pathname });
   navigator.sendBeacon ? navigator.sendBeacon(`${SCRIPT_URL}?${p}`) : fetch(`${SCRIPT_URL}?${p}`,{mode:'no-cors'}).catch(()=>{});
 });
 
@@ -309,6 +337,19 @@ document.getElementById('inp-contact').addEventListener('input', function(){
   checkForm();
 });
 ['inp-name','inp-email'].forEach(id => document.getElementById(id).addEventListener('input', checkForm));
+
+// 더 알아보기 / 외부 링크 클릭 트래킹 (이벤트 페이지)
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('.shrine-more-btn, .event-logo, a[href*="m.site.naver.com"], a[href*="litt.ly"]');
+  if (!a) return;
+  if (a.classList.contains('shrine-more-btn')) {
+    track('learn_more_click', 'event_success');
+  } else if (a.classList.contains('event-logo')) {
+    track('logo_click', 'event_page');
+  } else {
+    track('external_click', a.href.includes('naver') ? 'naver' : 'other');
+  }
+});
 
 function checkForm() {
   const name    = document.getElementById('inp-name').value.trim();
@@ -337,7 +378,9 @@ async function submitForm() {
     name, contact, email,
     fortune, fortuneText,
     marketing: marketing ? '동의' : '미동의',
-    device
+    device,
+    channel: CHANNEL,
+    ref: document.referrer || 'direct'
   };
 
   const btn = document.getElementById('submitBtn');
@@ -364,17 +407,19 @@ async function shareResult() {
     const f = JSON.parse(localStorage.getItem('fortune') || 'null');
     if (f) { fortune = f.rank; fortuneText = f.text; }
   } catch(e) {}
+  track('share_click', 'attempt', fortune);
   const url = 'https://theshrine-movie.vercel.app/';
   const shareText = `[신사 : 악귀의 속삭임]\n무언가 들리기 시작했다...\n내 운세: ${fortune}\n${fortuneText}\n\n당신의 운세는? 🎋\n오미쿠지 운세 뽑고 일본 항공권 받아가세요 ✨\n${url}`;
   if (navigator.share) {
-    try { await navigator.share({ title:'신사 : 악귀의 속삭임', text:shareText, url }); } catch(e) {}
+    try { await navigator.share({ title:'신사 : 악귀의 속삭임', text:shareText, url }); track('share_success','native',fortune); } catch(e) { track('share_cancel','native',fortune); }
     return;
   }
-  try { await navigator.clipboard.writeText(url); } catch {
+  try { await navigator.clipboard.writeText(url); track('share_success','clipboard',fortune); } catch {
     const t = document.createElement('textarea');
     t.value = url; t.style.cssText = 'position:fixed;opacity:0';
     document.body.appendChild(t); t.select();
     document.execCommand('copy'); document.body.removeChild(t);
+    track('share_success','execCommand',fortune);
   }
   alert('링크가 복사됐어요! 📋');
 }

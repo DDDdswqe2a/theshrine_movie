@@ -4,431 +4,674 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>관리자 대시보드 | 신사</title>
+<link rel="icon" type="image/png" href="assets/favicon_shrine.png">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#f5f5f7;--surface:#ffffff;--border:#e5e5ea;--border2:#d1d1d6;
-  --text:#1c1c1e;--text2:#3a3a3c;--text3:#8e8e93;--text4:#aeaeb2;
-  --red:#c0392b;--red-b:#e74c3c;--red-light:#ffeee e;--red-bg:#fff5f5;
-  --green:#27ae60;--green-bg:#f0fff4;
-  --blue:#2980b9;--blue-bg:#f0f7ff;
-  --orange:#e67e22;--orange-bg:#fff8f0;
-  --purple:#8e44ad;--purple-bg:#faf0ff;
-  --accent:#c0392b;
+  --bg:#0c0a0a; --panel:#161010; --panel2:#1c1414;
+  --border:#3a2424; --border-soft:#2a1c1c;
+  --ink:#f0e4d0; --dim:#a0908a; --mid:#7a6a64; --grey:#5a4a44;
+  --red:#cc3030; --red-deep:#8b2020; --gold:#d4af6c;
+  --green:#5a9a5a; --blue:#4a7aaa; --yellow:#caa84c;
 }
+body{
+  font-family:'Pretendard',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); min-height:100vh;
+  padding:24px 16px 60px;
+}
+.wrap{max-width:1280px;margin:0 auto;}
 
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;font-size:14px;}
+/* ===== 로그인 화면 ===== */
+.login-page{
+  max-width:420px; margin:80px auto;
+  background:var(--panel); border:1px solid var(--border);
+  padding:40px 32px; border-radius:4px;
+}
+.login-page.hide{display:none;}
+.login-logo{text-align:center;font-size:36px;margin-bottom:8px;color:var(--red);}
+.login-title{text-align:center;font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:.05em;}
+.login-sub{text-align:center;font-size:12px;color:var(--mid);margin-bottom:32px;letter-spacing:.2em;}
+.login-field{margin-bottom:14px;}
+.login-field label{display:block;font-size:11px;color:var(--dim);margin-bottom:6px;letter-spacing:.12em;}
+.login-field input{
+  width:100%; padding:12px 14px; font-size:14px;
+  background:var(--bg); border:1px solid var(--border); color:var(--ink);
+  border-radius:3px; font-family:inherit;
+}
+.login-field input:focus{outline:none;border-color:var(--red);}
+.login-btn{
+  width:100%; margin-top:10px; padding:14px;
+  background:var(--red); color:#fff; border:none; cursor:pointer;
+  font-size:14px; font-weight:700; letter-spacing:.15em; border-radius:3px;
+  font-family:inherit;
+}
+.login-btn:hover{background:#a82828;}
+.login-hint{font-size:11px;color:var(--grey);text-align:center;margin-top:16px;}
+.login-err{font-size:12px;color:#e85050;text-align:center;margin-top:10px;min-height:16px;}
 
-/* ── LOGIN ── */
-.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:48px 40px;width:min(400px,92vw);box-shadow:0 4px 24px rgba(0,0,0,.08);}
-.login-logo{display:block;width:180px;margin:0 auto 24px;opacity:.85;}
-.login-title{font-size:20px;font-weight:700;color:var(--text);text-align:center;margin-bottom:4px;}
-.login-sub{font-size:12px;color:var(--text3);text-align:center;margin-bottom:32px;letter-spacing:.03em;}
-.login-label{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:.05em;margin-bottom:6px;display:block;}
-.login-field{width:100%;background:var(--bg);border:1.5px solid var(--border2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;padding:12px 14px;border-radius:8px;outline:none;margin-bottom:12px;transition:border-color .2s;}
-.login-field:focus{border-color:var(--accent);}
-.login-btn{width:100%;background:var(--accent);border:none;color:white;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:600;padding:14px;border-radius:8px;cursor:pointer;transition:background .2s;margin-top:4px;}
-.login-btn:hover{background:var(--red-b);}
-.login-err{font-size:12px;color:var(--red-b);text-align:center;margin-top:10px;min-height:18px;}
-.login-hint{font-size:11px;color:var(--text4);text-align:center;margin-top:20px;line-height:1.8;}
+/* ===== 대시보드 ===== */
+.dash{display:none;}
+.dash.show{display:block;}
 
-/* ── DASHBOARD ── */
-#dashboard{display:none;}
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border-soft);
+  flex-wrap:wrap;gap:12px;
+}
+.header h1{font-size:18px;letter-spacing:.15em;color:var(--red);font-weight:700;}
+.header .sub{font-size:11px;color:var(--mid);margin-left:8px;letter-spacing:.1em;}
+.header-actions{display:flex;gap:8px;}
+.header-btn{
+  padding:8px 14px; background:transparent;
+  border:1px solid var(--border); color:var(--dim);
+  font-size:12px; cursor:pointer; border-radius:3px;
+  font-family:inherit; transition:all .2s; text-decoration:none;
+}
+.header-btn:hover{border-color:var(--red);color:var(--ink);}
+.header-btn.danger:hover{border-color:#cc3030;color:#e85050;}
 
-/* Topbar */
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,.06);}
-.topbar-left{display:flex;align-items:center;gap:12px;}
-.topbar-brand{font-size:16px;font-weight:700;color:var(--text);}
-.topbar-badge{font-size:10px;font-weight:600;background:var(--red-bg);color:var(--accent);border:1px solid #ffcdd2;padding:2px 8px;border-radius:20px;letter-spacing:.05em;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.topbar-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);}
-.tb-btn{background:var(--bg);border:1.5px solid var(--border2);color:var(--text2);font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:500;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s;}
-.tb-btn:hover{border-color:var(--accent);color:var(--accent);}
-.tb-btn.danger:hover{border-color:var(--red-b);color:var(--red-b);}
-.tb-link{color:var(--accent);font-size:12px;font-weight:500;text-decoration:none;padding:7px 14px;border-radius:8px;border:1.5px solid #ffcdd2;background:var(--red-bg);transition:all .2s;}
-.tb-link:hover{background:#ffe0e0;}
+.status-bar{
+  background:var(--panel); border:1px solid var(--border-soft);
+  padding:10px 16px; margin-bottom:24px; border-radius:3px;
+  font-size:12px; color:var(--dim); display:flex; justify-content:space-between;
+}
+.status-bar .ok{color:var(--green);}
+.status-bar .err{color:#e85050;}
 
-/* Status bar */
-.status-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3);}
-.status-dot{width:6px;height:6px;border-radius:50%;animation:pdot 2s ease-in-out infinite;}
-.status-dot.ok{background:var(--green);}
-.status-dot.loading{background:var(--orange);}
-.status-dot.err{background:var(--red-b);}
-@keyframes pdot{0%,100%{opacity:.5;}50%{opacity:1;}}
+/* 섹션 제목 */
+.section-title{
+  font-size:13px;color:var(--gold);letter-spacing:.25em;font-weight:600;
+  margin-bottom:14px;padding-left:8px;border-left:2px solid var(--red);
+}
+.section-title .desc{font-size:11px;color:var(--mid);margin-left:10px;letter-spacing:.05em;font-weight:400;}
 
-/* Content */
-.content{padding:28px;max-width:1200px;margin:0 auto;}
+/* 통계 카드 */
+.stats{
+  display:grid; gap:12px; margin-bottom:32px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+}
+.stat-card{
+  background:var(--panel); border:1px solid var(--border-soft);
+  padding:18px; border-radius:3px; position:relative;
+}
+.stat-card .ico{font-size:20px;margin-bottom:8px;opacity:.8;}
+.stat-card .num{font-size:28px;font-weight:700;color:var(--ink);line-height:1.1;}
+.stat-card .label{font-size:12px;color:var(--dim);margin-top:4px;}
+.stat-card .desc{font-size:10px;color:var(--grey);margin-top:6px;letter-spacing:.05em;}
+.stat-card.accent{border-color:var(--red-deep);}
+.stat-card.accent .num{color:var(--red);}
+.stat-card.gold{border-color:#7a6020;}
+.stat-card.gold .num{color:var(--gold);}
 
-/* Section title */
-.sec-title{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-.sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+/* 차트/패널 */
+.panel{
+  background:var(--panel); border:1px solid var(--border-soft);
+  padding:20px; border-radius:3px; margin-bottom:24px;
+}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.panel-title{font-size:13px;color:var(--ink);font-weight:600;letter-spacing:.05em;}
+.panel-sub{font-size:11px;color:var(--mid);}
+.chart-wrap{height:280px;position:relative;}
 
-/* Stat cards */
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:32px;}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s;}
-.stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px);}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0;}
-.stat-card.visits::before{background:var(--blue);}
-.stat-card.draws::before{background:var(--purple);}
-.stat-card.shares::before{background:var(--green);}
-.stat-card.events::before{background:var(--accent);}
-.stat-card.dwell::before{background:var(--orange);}
-.stat-icon{font-size:22px;margin-bottom:10px;}
-.stat-label{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:6px;}
-.stat-value{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;color:var(--text);line-height:1;}
-.stat-unit{font-size:14px;color:var(--text3);}
-.stat-sub{font-size:11px;color:var(--text4);margin-top:6px;}
-.stat-loading{color:var(--text4);}
+/* 2열 그리드 */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+@media(max-width:760px){.grid-2{grid-template-columns:1fr;}}
 
-/* Chart */
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:32px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
-.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
-.chart-title{font-size:14px;font-weight:600;color:var(--text);}
-.chart-legend{display:flex;gap:16px;flex-wrap:wrap;}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);}
-.legend-dot{width:8px;height:8px;border-radius:50%;}
-.chart-wrap{position:relative;height:200px;}
+/* 채널 분포 */
+.channel-list{display:flex;flex-direction:column;gap:8px;}
+.channel-row{
+  display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:var(--bg);border-radius:3px;border:1px solid var(--border-soft);
+}
+.channel-icon{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  flex-shrink:0;
+}
+.channel-name{flex:1;font-size:13px;color:var(--ink);font-weight:500;}
+.channel-bar{flex:2;height:6px;background:var(--border-soft);border-radius:3px;overflow:hidden;}
+.channel-bar-fill{height:100%;background:linear-gradient(90deg,var(--red-deep),var(--red));}
+.channel-count{font-size:12px;color:var(--dim);min-width:60px;text-align:right;}
+.channel-pct{font-size:11px;color:var(--mid);min-width:48px;text-align:right;}
 
-/* Table */
-.table-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:28px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
-.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
-.table-title-text{font-size:14px;font-weight:600;color:var(--text);}
-.table-count-badge{font-size:11px;font-weight:600;background:var(--red-bg);color:var(--accent);padding:3px 10px;border-radius:20px;border:1px solid #ffcdd2;}
-.table-scroll{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-thead{background:var(--bg);}
-th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap;}
-td{padding:12px 14px;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:#fafafa;}
-.td-no{font-family:'JetBrains Mono',monospace;color:var(--text4);font-size:12px;}
-.td-name{font-weight:500;color:var(--text);}
-.td-fortune{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:700;}
-.td-fortune.daikichi{color:#c0392b;}.td-fortune.kichi{color:#27ae60;}.td-fortune.chukichi{color:#2980b9;}.td-fortune.shokichi{color:#8e6b2e;}.td-fortune.suekichi{color:#7d3c98;}.td-fortune.kyo,.td-fortune.daikyo{color:var(--text3);}
-.td-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);}
-.td-marketing.agree{color:var(--green);font-weight:500;font-size:11px;}
-.td-marketing.disagree{color:var(--text4);font-size:11px;}
-.empty-row td{text-align:center;padding:48px;color:var(--text4);font-size:13px;}
+/* 액션 카드 */
+.actions-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;
+}
+.action-card{
+  background:var(--bg);border:1px solid var(--border-soft);
+  padding:14px;border-radius:3px;
+}
+.action-card .label{font-size:11px;color:var(--mid);letter-spacing:.08em;margin-bottom:4px;}
+.action-card .num{font-size:22px;font-weight:700;color:var(--ink);}
+.action-card .sub{font-size:11px;color:var(--dim);margin-top:6px;line-height:1.5;}
+.action-card .sub .accent{color:var(--gold);}
 
-/* Search */
-.search-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-.search-input{background:var(--surface);border:1.5px solid var(--border2);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:9px 14px;border-radius:8px;outline:none;transition:border-color .2s;min-width:200px;}
-.search-input:focus{border-color:var(--accent);}
-.filter-select{background:var(--surface);border:1.5px solid var(--border2);color:var(--text2);font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:9px 14px;border-radius:8px;outline:none;cursor:pointer;}
+/* 응모자 목록 */
+.filter-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-bar select, .filter-bar input{
+  padding:7px 10px; font-size:12px; background:var(--bg);
+  border:1px solid var(--border); color:var(--ink); border-radius:3px;
+  font-family:inherit;
+}
+.filter-bar select:focus, .filter-bar input:focus{outline:none;border-color:var(--red);}
+.filter-bar input{flex:1;min-width:140px;}
+.applicants-count{font-size:12px;color:var(--dim);margin-bottom:8px;}
+.applicants-count strong{color:var(--gold);font-size:14px;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border-soft);}
+th{background:var(--bg);color:var(--dim);font-weight:600;letter-spacing:.05em;font-size:11px;white-space:nowrap;}
+td{color:var(--ink);}
+td.dim{color:var(--dim);}
+td.mono{font-family:ui-monospace,monospace;font-size:11px;}
+tr:hover td{background:rgba(180,40,40,.04);}
+.dup-badge{
+  display:inline-block;background:#cc3030;color:#fff;
+  font-size:9px;padding:2px 6px;border-radius:8px;margin-left:6px;
+  letter-spacing:.05em;
+}
+.fortune-badge{
+  display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;
+  font-weight:700;letter-spacing:.05em;
+}
+.fortune-大吉{background:rgba(204,48,48,.18);color:#ff8a8a;}
+.fortune-吉{background:rgba(90,154,90,.18);color:#9ed8a0;}
+.fortune-中吉{background:rgba(74,122,170,.18);color:#9cc6ea;}
+.fortune-小吉{background:rgba(74,122,170,.13);color:#7aa6c8;}
+.fortune-末吉{background:rgba(202,168,76,.18);color:#e8c878;}
+.fortune-凶{background:rgba(140,60,60,.18);color:#d08080;}
+.fortune-大凶{background:rgba(204,48,48,.22);color:#ff6060;}
 
-/* Pagination */
-.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px;border-top:1px solid var(--border);}
-.pg-btn{background:var(--surface);border:1.5px solid var(--border2);color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .2s;}
-.pg-btn:hover,.pg-btn.active{border-color:var(--accent);color:var(--accent);background:var(--red-bg);}
-.pg-btn:disabled{opacity:.35;cursor:not-allowed;}
-.pg-info{font-size:11px;color:var(--text3);}
+.loading{text-align:center;padding:40px;color:var(--mid);font-size:13px;}
+.empty{text-align:center;padding:40px;color:var(--grey);font-size:13px;}
 
-/* Toast */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--text);color:white;font-size:12px;padding:10px 22px;border-radius:8px;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none;}
-.toast.show{opacity:1;}
-
-@keyframes fadein{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.stat-card{animation:fadein .4s ease both;}
-.stat-card:nth-child(1){animation-delay:.04s;}.stat-card:nth-child(2){animation-delay:.08s;}.stat-card:nth-child(3){animation-delay:.12s;}.stat-card:nth-child(4){animation-delay:.16s;}.stat-card:nth-child(5){animation-delay:.20s;}
-.chart-card{animation:fadein .4s .24s both;}
-.table-card{animation:fadein .4s .28s both;}
+@media(max-width:560px){
+  body{padding:16px 12px 40px;}
+  .stat-card .num{font-size:22px;}
+  th,td{padding:8px;font-size:11px;}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login-wrap" id="loginWrap">
-  <div class="login-card">
-    <span style="display:block;text-align:center;font-size:28px;margin-bottom:16px;">⛩</span>
-    <h1 class="login-title">관리자 대시보드</h1>
-    <p class="login-sub">신사 · 악귀의 속삭임 · Admin</p>
-
-    <label class="login-label">Apps Script URL</label>
-    <input class="login-field" id="loginUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
-
-    <label class="login-label">관리자 비밀번호</label>
-    <input class="login-field" id="loginKey" type="password" placeholder="비밀번호 입력"
-      onkeydown="if(event.key==='Enter') doLogin()">
-
-    <button class="login-btn" onclick="doLogin()">입장하기</button>
-    <p class="login-err" id="loginErr"></p>
-    <p class="login-hint">Code.gs의 ADMIN_KEY를 입력하세요</p>
+<!-- 로그인 화면 -->
+<div class="login-page" id="loginPage">
+  <div class="login-logo">⛩</div>
+  <div class="login-title">관리자 대시보드</div>
+  <div class="login-sub">신사 · 악귀의 속삭임 · ADMIN</div>
+  <div class="login-field">
+    <label>Apps Script URL</label>
+    <input type="text" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyH25aSDuEI-8DWiTfYVGJb6UKTNP1s0w_ridsg-ZeD3_ZAWCv8RGULbBwzGQwQFVWYeQ/exec" placeholder="https://script.google.com/macros/s/.../exec">
   </div>
+  <div class="login-field">
+    <label>관리자 비밀번호</label>
+    <input type="password" id="adminKey" placeholder="ADMIN_KEY">
+  </div>
+  <button class="login-btn" onclick="login()">입장하기</button>
+  <div class="login-err" id="loginErr"></div>
+  <div class="login-hint">Code.gs의 ADMIN_KEY를 입력하세요</div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="topbar-brand">⛩ 신사 관리자</span>
-      <span class="topbar-badge">ADMIN</span>
-    </div>
-    <div class="topbar-right">
-      <span class="topbar-time" id="topbarTime"></span>
-      <a class="tb-link" id="sheetsLink" href="#" target="_blank">구글 시트 →</a>
-      <button class="tb-btn" onclick="loadAll()">↻ 새로고침</button>
-      <button class="tb-btn danger" onclick="doLogout()">로그아웃</button>
-    </div>
-  </div>
+<!-- 대시보드 -->
+<div class="dash" id="dashboard">
+  <div class="wrap">
 
-  <div class="status-bar">
-    <span class="status-dot ok" id="statusDot"></span>
-    <span id="statusText">데이터 로드 완료</span>
-    <span style="margin-left:auto;font-size:11px;" id="lastUpdate"></span>
-  </div>
-
-  <div class="content">
-
-    <!-- Stats -->
-    <p class="sec-title">실시간 통계</p>
-    <div class="stat-grid">
-      <div class="stat-card visits">
-        <div class="stat-icon">👥</div>
-        <p class="stat-label">총 유입자</p>
-        <p class="stat-value stat-loading" id="sv-visits">—</p>
-        <p class="stat-sub">페이지 방문</p>
+    <div class="header">
+      <div>
+        <h1>⛩ 신사 관리자</h1>
+        <span class="sub">ADMIN · 신사 : 악귀의 속삭임</span>
       </div>
-      <div class="stat-card draws">
-        <div class="stat-icon">🎋</div>
-        <p class="stat-label">운세 뽑기</p>
-        <p class="stat-value stat-loading" id="sv-draws">—</p>
-        <p class="stat-sub">오미쿠지 참여</p>
-      </div>
-      <div class="stat-card shares">
-        <div class="stat-icon">📤</div>
-        <p class="stat-label">외부 공유</p>
-        <p class="stat-value stat-loading" id="sv-shares">—</p>
-        <p class="stat-sub">공유 버튼 클릭</p>
-      </div>
-      <div class="stat-card events">
-        <div class="stat-icon">✉️</div>
-        <p class="stat-label">이벤트 응모</p>
-        <p class="stat-value stat-loading" id="sv-events">—</p>
-        <p class="stat-sub">응모 완료</p>
-      </div>
-      <div class="stat-card dwell">
-        <div class="stat-icon">⏱</div>
-        <p class="stat-label">평균 체류시간</p>
-        <p class="stat-value stat-loading" id="sv-dwell">—<span class="stat-unit" id="sv-dwell-unit"></span></p>
-        <p class="stat-sub">페이지 머문 시간</p>
+      <div class="header-actions">
+        <a class="header-btn" id="sheetLink" target="_blank">📊 구글 시트 →</a>
+        <button class="header-btn" onclick="loadAll()">↻ 새로고침</button>
+        <button class="header-btn danger" onclick="logout()">로그아웃</button>
       </div>
     </div>
 
-    <!-- Chart -->
-    <p class="sec-title">일별 현황 (최근 14일)</p>
-    <div class="chart-card">
-      <div class="chart-header">
-        <span class="chart-title">방문 · 뽑기 · 공유 추이</span>
-        <div class="chart-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div>유입자</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#9b59b6;"></div>운세뽑기</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#2ecc71;"></div>공유</div>
+    <div class="status-bar">
+      <span id="statusMsg">데이터 로딩 중...</span>
+      <span id="lastUpdate"></span>
+    </div>
+
+    <!-- 핵심 통계 -->
+    <div class="section-title">실시간 통계 <span class="desc">전체 사이트 활동 요약</span></div>
+    <div class="stats">
+      <div class="stat-card">
+        <div class="ico">👥</div>
+        <div class="num" id="s-visit">—</div>
+        <div class="label">총 유입자</div>
+        <div class="desc">페이지 방문 수</div>
+      </div>
+      <div class="stat-card">
+        <div class="ico">🎋</div>
+        <div class="num" id="s-draw">—</div>
+        <div class="label">운세 뽑기</div>
+        <div class="desc">오미쿠지 참여</div>
+      </div>
+      <div class="stat-card">
+        <div class="ico">📤</div>
+        <div class="num" id="s-share">—</div>
+        <div class="label">공유 성공</div>
+        <div class="desc">실제 공유 완료</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="ico">✉️</div>
+        <div class="num" id="s-register">—</div>
+        <div class="label">이벤트 응모</div>
+        <div class="desc">응모 완료</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="ico">🔁</div>
+        <div class="num" id="s-duplicates">—</div>
+        <div class="label">중복 참여 시도</div>
+        <div class="desc">같은 번호 재응모</div>
+      </div>
+      <div class="stat-card">
+        <div class="ico">⏱</div>
+        <div class="num" id="s-dwell">—</div>
+        <div class="label">평균 체류시간</div>
+        <div class="desc">페이지 머문 시간</div>
+      </div>
+    </div>
+
+    <!-- 일별 추이 -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">📈 일별 현황 (최근 14일)</div>
+          <div class="panel-sub">유입 · 뽑기 · 공유 · 응모 추이</div>
         </div>
       </div>
-      <div class="chart-wrap"><canvas id="myChart"></canvas></div>
-    </div>
-
-    <!-- Table -->
-    <p class="sec-title">응모자 목록</p>
-    <div class="search-row">
-      <input class="search-input" id="searchInput" type="text" placeholder="이름 · 연락처 · 메일 검색..." oninput="renderTable()">
-      <select class="filter-select" id="filterFortune" onchange="renderTable()">
-        <option value="">전체 운세</option>
-        <option>大吉</option><option>吉</option><option>中吉</option>
-        <option>小吉</option><option>末吉</option><option>凶</option><option>大凶</option>
-      </select>
-      <select class="filter-select" id="filterMarketing" onchange="renderTable()">
-        <option value="">마케팅 전체</option>
-        <option value="동의">동의</option>
-        <option value="미동의">미동의</option>
-      </select>
-    </div>
-
-    <div class="table-card">
-      <div class="table-header">
-        <span class="table-title-text">응모자 목록</span>
-        <span class="table-count-badge" id="tableCount">0명</span>
+      <div class="chart-wrap">
+        <canvas id="dailyChart"></canvas>
       </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr>
-            <th>#</th><th>이름</th><th>연락처</th><th>메일</th>
-            <th>운세</th><th>마케팅</th><th>응모시간</th>
-          </tr></thead>
-          <tbody id="tableBody"></tbody>
+    </div>
+
+    <!-- 유입 채널 -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">🌐 유입 채널</div>
+            <div class="panel-sub">어느 경로로 들어왔는지</div>
+          </div>
+        </div>
+        <div class="channel-list" id="channelList">
+          <div class="loading">분석 중...</div>
+        </div>
+      </div>
+
+      <!-- 등급별 분포 -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">🎴 운세 등급 분포</div>
+            <div class="panel-sub">뽑힌 운세 등급별 비율</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="fortuneChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- 인터랙션 상세 -->
+    <div class="section-title">버튼 클릭 & 인터랙션 <span class="desc">사용자가 어떤 버튼을 눌렀는지</span></div>
+    <div class="panel">
+      <div class="actions-grid" id="actionsGrid">
+        <div class="loading">분석 중...</div>
+      </div>
+    </div>
+
+    <!-- 응모자 목록 -->
+    <div class="section-title">응모자 목록 <span class="desc">이벤트 참여자 상세</span></div>
+    <div class="panel">
+      <div class="filter-bar">
+        <select id="filterFortune">
+          <option value="">전체 운세</option>
+          <option value="大吉">大吉</option><option value="吉">吉</option>
+          <option value="中吉">中吉</option><option value="小吉">小吉</option>
+          <option value="末吉">末吉</option><option value="凶">凶</option>
+          <option value="大凶">大凶</option>
+        </select>
+        <select id="filterMarketing">
+          <option value="">마케팅 전체</option>
+          <option value="동의">동의</option>
+          <option value="미동의">미동의</option>
+        </select>
+        <select id="filterDup">
+          <option value="">중복 전체</option>
+          <option value="dup">중복만</option>
+          <option value="unique">신규만</option>
+        </select>
+        <input type="text" id="filterSearch" placeholder="이름/연락처/이메일 검색">
+      </div>
+      <div class="applicants-count">
+        총 응모자 <strong id="totalApplicants">0</strong>명
+        <span style="color:var(--mid);margin-left:8px;">(고유 <strong id="uniqueApplicants" style="color:var(--green);">0</strong>명, 중복 <strong id="dupApplicants" style="color:var(--red);">0</strong>건)</span>
+      </div>
+      <div class="tbl-wrap">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th>#</th><th>이름</th><th>연락처</th><th>이메일</th>
+              <th>운세</th><th>유입경로</th><th>마케팅</th><th>응모시간</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody">
+            <tr><td colspan="8" class="loading">로딩 중...</td></tr>
+          </tbody>
         </table>
       </div>
-      <div class="pagination" id="paginationWrap"></div>
     </div>
 
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-const PER_PAGE=20;
-let SCRIPT_URL='',ADMIN_KEY='',allRegs=[],chart=null,curPage=1;
+let SCRIPT = '', KEY = '';
+let chartDaily = null, chartFortune = null;
+let lastData = null;
 
-setInterval(()=>{
-  const el=document.getElementById('topbarTime');
-  if(el) el.textContent=new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-},1000);
-
-function doLogin(){
-  const url=document.getElementById('loginUrl').value.trim();
-  const key=document.getElementById('loginKey').value.trim();
-  if(!url||!key){showErr('URL과 비밀번호를 모두 입력해주세요');return;}
-  showErr('확인 중...');
-  fetch(`${url}?action=stats&key=${encodeURIComponent(key)}`)
-    .then(r=>r.json())
-    .then(data=>{
-      if(data.error){showErr('비밀번호가 올바르지 않습니다');return;}
-      SCRIPT_URL=url;ADMIN_KEY=key;
-      try{localStorage.setItem('adminUrl',url);localStorage.setItem('adminKey',key);}catch(e){}
-      document.getElementById('loginWrap').style.display='none';
-      document.getElementById('dashboard').style.display='block';
-      applyStats(data);loadChart();loadRegs();
-    })
-    .catch(()=>showErr('연결 실패. URL을 다시 확인해주세요'));
-}
-
-function showErr(m){document.getElementById('loginErr').textContent=m;}
-
-function doLogout(){
-  SCRIPT_URL='';ADMIN_KEY='';
-  try{localStorage.removeItem('adminUrl');localStorage.removeItem('adminKey');}catch(e){}
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('loginWrap').style.display='flex';
-  document.getElementById('loginKey').value='';
-}
-
-window.addEventListener('load',()=>{
-  try{
-    const url=localStorage.getItem('adminUrl');
-    const key=localStorage.getItem('adminKey');
-    if(url&&key){document.getElementById('loginUrl').value=url;document.getElementById('loginKey').value=key;}
-  }catch(e){}
-});
-
-function setStatus(s,m){
-  document.getElementById('statusDot').className='status-dot '+s;
-  document.getElementById('statusText').textContent=m;
-}
-
-async function loadAll(){
-  setStatus('loading','불러오는 중...');
-  await Promise.all([loadStats(),loadChart(),loadRegs()]);
-  document.getElementById('lastUpdate').textContent='최종 업데이트: '+new Date().toLocaleTimeString('ko-KR');
-  setStatus('ok','데이터 로드 완료');
-}
-
-async function loadStats(){
-  try{
-    const d=await fetch(`${SCRIPT_URL}?action=stats&key=${encodeURIComponent(ADMIN_KEY)}`).then(r=>r.json());
-    applyStats(d);
-  }catch(e){setStatus('err','통계 로드 실패');}
-}
-
-function applyStats(d){
-  set('sv-visits',d.pageviews??'—');set('sv-draws',d.draws??'—');
-  set('sv-shares',d.shares??'—');set('sv-events',d.registrations??'—');
-  const dw=d.avgDwell??0;
-  if(dw>=60){set('sv-dwell',Math.round(dw/60));set('sv-dwell-unit','분');}
-  else{set('sv-dwell',dw||'—');set('sv-dwell-unit',dw?'초':'');}
-  if(d.sheetsUrl)document.getElementById('sheetsLink').href=d.sheetsUrl;
-  ['sv-visits','sv-draws','sv-shares','sv-events','sv-dwell'].forEach(id=>{
-    document.getElementById(id).classList.remove('stat-loading');
+// 로그인 처리
+function login() {
+  const url = document.getElementById('scriptUrl').value.trim();
+  const key = document.getElementById('adminKey').value.trim();
+  if (!url || !key) {
+    document.getElementById('loginErr').textContent = 'URL과 비밀번호를 모두 입력하세요';
+    return;
+  }
+  SCRIPT = url.replace(/\/+$/,'');
+  KEY = key;
+  document.getElementById('loginErr').textContent = '확인 중...';
+  loadAll().then(ok => {
+    if (ok) {
+      try {
+        sessionStorage.setItem('admin_url', SCRIPT);
+        sessionStorage.setItem('admin_key', KEY);
+      } catch(e) {}
+      document.getElementById('loginPage').classList.add('hide');
+      document.getElementById('dashboard').classList.add('show');
+    } else {
+      document.getElementById('loginErr').textContent = '비밀번호가 틀렸거나 URL이 잘못됐어요';
+    }
   });
 }
 
-function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
-
-async function loadChart(){
-  try{
-    const d=await fetch(`${SCRIPT_URL}?action=daily&key=${encodeURIComponent(ADMIN_KEY)}`).then(r=>r.json());
-    renderChart(d);
-  }catch(e){}
+function logout() {
+  try {
+    sessionStorage.removeItem('admin_url');
+    sessionStorage.removeItem('admin_key');
+  } catch(e) {}
+  location.reload();
 }
 
-function renderChart(data){
-  const ctx=document.getElementById('myChart').getContext('2d');
-  if(chart)chart.destroy();
-  chart=new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels:data.dates||[],
-      datasets:[
-        {label:'유입자',data:data.pageviews||[],backgroundColor:'rgba(52,152,219,.75)',borderColor:'#3498db',borderWidth:1,borderRadius:4},
-        {label:'운세뽑기',data:data.draws||[],backgroundColor:'rgba(155,89,182,.75)',borderColor:'#9b59b6',borderWidth:1,borderRadius:4},
-        {label:'공유',data:data.shares||[],backgroundColor:'rgba(46,204,113,.75)',borderColor:'#2ecc71',borderWidth:1,borderRadius:4},
+// 자동 로그인 (세션 저장된 경우)
+try {
+  const su = sessionStorage.getItem('admin_url');
+  const sk = sessionStorage.getItem('admin_key');
+  if (su && sk) {
+    SCRIPT = su; KEY = sk;
+    document.getElementById('scriptUrl').value = su;
+    document.getElementById('adminKey').value = sk;
+    loadAll().then(ok => {
+      if (ok) {
+        document.getElementById('loginPage').classList.add('hide');
+        document.getElementById('dashboard').classList.add('show');
+      }
+    });
+  }
+} catch(e) {}
+
+// 데이터 로드
+async function loadAll() {
+  try {
+    document.getElementById('statusMsg').textContent = '데이터 로딩 중...';
+    const url = `${SCRIPT}?action=dashboard&key=${encodeURIComponent(KEY)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.ok) {
+      document.getElementById('statusMsg').innerHTML = `<span class="err">⚠ ${data.error || '데이터 로드 실패'}</span>`;
+      return false;
+    }
+    lastData = data;
+    render(data);
+    const now = new Date();
+    document.getElementById('statusMsg').innerHTML = `<span class="ok">✓ 데이터 로드 완료</span>`;
+    document.getElementById('lastUpdate').textContent = `최종 업데이트: ${now.toLocaleString('ko-KR')}`;
+    return true;
+  } catch(e) {
+    document.getElementById('statusMsg').innerHTML = `<span class="err">⚠ 네트워크 오류: ${e.message}</span>`;
+    return false;
+  }
+}
+
+function render(data) {
+  // 시트 링크
+  if (data.sheetUrl) document.getElementById('sheetLink').href = data.sheetUrl;
+
+  // 핵심 통계
+  document.getElementById('s-visit').textContent = (data.stats.visits||0).toLocaleString();
+  document.getElementById('s-draw').textContent = (data.stats.draws||0).toLocaleString();
+  document.getElementById('s-share').textContent = (data.stats.shares||0).toLocaleString();
+  document.getElementById('s-register').textContent = (data.stats.registers||0).toLocaleString();
+  document.getElementById('s-duplicates').textContent = (data.stats.duplicates||0).toLocaleString();
+  document.getElementById('s-dwell').textContent = (data.stats.avgDwell||0) + '초';
+
+  // 일별 차트
+  renderDailyChart(data.daily||[]);
+
+  // 채널
+  renderChannels(data.channels||{});
+
+  // 등급 분포
+  renderFortuneChart(data.fortuneDist||{});
+
+  // 액션 (버튼 클릭 등)
+  renderActions(data.actions||{}, data.stats||{});
+
+  // 응모자 테이블
+  renderApplicants(data.applicants||[]);
+}
+
+function renderDailyChart(daily) {
+  const ctx = document.getElementById('dailyChart').getContext('2d');
+  const labels = daily.map(d => d.date.slice(5));
+  if (chartDaily) chartDaily.destroy();
+  chartDaily = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label:'유입', data:daily.map(d=>d.visits||0), borderColor:'#4a7aaa', backgroundColor:'rgba(74,122,170,.1)', tension:.3, fill:true },
+        { label:'뽑기', data:daily.map(d=>d.draws||0), borderColor:'#d4af6c', backgroundColor:'rgba(212,175,108,.1)', tension:.3, fill:true },
+        { label:'공유', data:daily.map(d=>d.shares||0), borderColor:'#5a9a5a', backgroundColor:'rgba(90,154,90,.1)', tension:.3, fill:true },
+        { label:'응모', data:daily.map(d=>d.registers||0), borderColor:'#cc3030', backgroundColor:'rgba(204,48,48,.1)', tension:.3, fill:true },
       ]
     },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'rgba(28,28,30,.9)',titleColor:'#fff',bodyColor:'#aeaeb2',padding:10,borderColor:'#3a3a3c',borderWidth:1}},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{color:'#a0908a',font:{size:11}}}},
       scales:{
-        x:{grid:{color:'rgba(0,0,0,.06)'},ticks:{color:'#8e8e93',font:{size:11}}},
-        y:{grid:{color:'rgba(0,0,0,.06)'},ticks:{color:'#8e8e93',font:{size:11}},beginAtZero:true}
+        x:{ticks:{color:'#7a6a64',font:{size:10}}, grid:{color:'rgba(58,36,36,.3)'}},
+        y:{ticks:{color:'#7a6a64',font:{size:10}}, grid:{color:'rgba(58,36,36,.3)'}, beginAtZero:true}
       }
     }
   });
 }
 
-async function loadRegs(){
-  try{
-    allRegs=await fetch(`${SCRIPT_URL}?action=registrations&key=${encodeURIComponent(ADMIN_KEY)}`).then(r=>r.json());
-    curPage=1;renderTable();
-  }catch(e){document.getElementById('tableBody').innerHTML='<tr class="empty-row"><td colspan="7">데이터 로드 실패</td></tr>';}
+function renderChannels(channels) {
+  const el = document.getElementById('channelList');
+  const entries = Object.entries(channels).sort((a,b) => b[1] - a[1]);
+  if (entries.length === 0) {
+    el.innerHTML = '<div class="empty">아직 데이터가 없어요</div>';
+    return;
+  }
+  const total = entries.reduce((s,[,v])=>s+v, 0);
+  const icons = {
+    direct:'🔗', google:'🔍', naver:'🟢', kakao:'💬', kakaotalk:'💬',
+    instagram:'📸', facebook:'📘', youtube:'▶️', twitter:'🐦',
+    tiktok:'🎵', line:'💚', linktree:'🌳', internal:'⛩',
+    unknown:'❓'
+  };
+  const colors = {
+    direct:'#7a6a64', google:'#4a85d8', naver:'#03c75a', kakao:'#fae100',
+    kakaotalk:'#fae100', instagram:'#e1306c', facebook:'#1877f2',
+    youtube:'#ff0000', twitter:'#1da1f2', tiktok:'#69c9d0',
+    line:'#06c755', linktree:'#39e09b', internal:'#cc3030',
+    unknown:'#5a4a44'
+  };
+  el.innerHTML = entries.map(([ch, count]) => {
+    const pct = ((count/total)*100).toFixed(1);
+    const ico = icons[ch.toLowerCase()] || '🌐';
+    const color = colors[ch.toLowerCase()] || '#7a6a64';
+    return `<div class="channel-row">
+      <div class="channel-icon" style="background:${color}22;color:${color}">${ico}</div>
+      <div class="channel-name">${escapeHtml(ch)}</div>
+      <div class="channel-bar"><div class="channel-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${color}aa,${color})"></div></div>
+      <div class="channel-count">${count.toLocaleString()}</div>
+      <div class="channel-pct">${pct}%</div>
+    </div>`;
+  }).join('');
 }
 
-const fcls={'大吉':'daikichi','吉':'kichi','中吉':'chukichi','小吉':'shokichi','末吉':'suekichi','凶':'kyo','大凶':'daikyo'};
+function renderFortuneChart(dist) {
+  const ctx = document.getElementById('fortuneChart').getContext('2d');
+  const labels = ['大吉','吉','中吉','小吉','末吉','凶','大凶'];
+  const values = labels.map(k => dist[k]||0);
+  const colors = ['#ff5050','#5a9a5a','#4a7aaa','#7aa6c8','#caa84c','#d08080','#cc1010'];
+  if (chartFortune) chartFortune.destroy();
+  chartFortune = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets:[{ data:values, backgroundColor:colors, borderColor:'#161010', borderWidth:2 }]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{color:'#a0908a',font:{size:11},padding:8}}}
+    }
+  });
+}
 
-function renderTable(){
-  const q=document.getElementById('searchInput').value.trim().toLowerCase();
-  const ff=document.getElementById('filterFortune').value;
-  const fm=document.getElementById('filterMarketing').value;
-  let rows=allRegs.filter(r=>{
-    if(ff&&r.fortune!==ff)return false;
-    if(fm&&r.marketing!==fm)return false;
-    if(q&&!`${r.name}${r.contact}${r.email}`.toLowerCase().includes(q))return false;
+function renderActions(actions, stats) {
+  const el = document.getElementById('actionsGrid');
+  const cards = [
+    {
+      label:'"더 알아보기" 클릭',
+      num: (actions.learn_more_total||0).toLocaleString(),
+      sub: `랜딩 페이지: <span class="accent">${actions.learn_more_landing||0}</span>회 · 결과 페이지: <span class="accent">${actions.learn_more_result||0}</span>회`
+    },
+    {
+      label:'이벤트 CTA 클릭',
+      num: (actions.event_cta_total||0).toLocaleString(),
+      sub: `랜딩 상단: <span class="accent">${actions.event_cta_index_top||0}</span> · 배너: <span class="accent">${actions.event_cta_index_banner||0}</span> · 결과: <span class="accent">${actions.event_cta_result||0}</span>`
+    },
+    {
+      label:'공유 시도 vs 성공',
+      num: (actions.share_attempts||0).toLocaleString() + ' → ' + (stats.shares||0).toLocaleString(),
+      sub: `네이티브: <span class="accent">${actions.share_native||0}</span>회 · 클립보드: <span class="accent">${actions.share_clipboard||0}</span>회 · 취소: <span class="accent">${actions.share_cancel||0}</span>회`
+    },
+    {
+      label:'이벤트 페이지 진입',
+      num: (actions.event_page_views||0).toLocaleString(),
+      sub: `평균 체류 <span class="accent">${actions.event_avg_dwell||0}</span>초 · 응모 전환율 <span class="accent">${actions.event_conv_rate||0}%</span>`
+    },
+    {
+      label:'운세 페이지별',
+      num: (actions.index_views||0).toLocaleString() + ' / ' + (actions.akki_views||0).toLocaleString(),
+      sub: `도리이(index.html): <span class="accent">${actions.index_views||0}</span> · 악귀(akki): <span class="accent">${actions.akki_views||0}</span>`
+    },
+    {
+      label:'모바일 vs 데스크탑',
+      num: (actions.mobile_visits||0).toLocaleString() + ' / ' + (actions.desktop_visits||0).toLocaleString(),
+      sub: `모바일: <span class="accent">${actions.mobile_visits||0}</span>명 · 데스크탑: <span class="accent">${actions.desktop_visits||0}</span>명`
+    },
+  ];
+  el.innerHTML = cards.map(c => `
+    <div class="action-card">
+      <div class="label">${c.label}</div>
+      <div class="num">${c.num}</div>
+      <div class="sub">${c.sub}</div>
+    </div>
+  `).join('');
+}
+
+function renderApplicants(list) {
+  // 중복 검사 (연락처 기준)
+  const contactCount = {};
+  list.forEach(a => {
+    const c = (a.contact||'').replace(/\D/g,'');
+    if (c) contactCount[c] = (contactCount[c]||0) + 1;
+  });
+
+  const totalEl = document.getElementById('totalApplicants');
+  const uniqueEl = document.getElementById('uniqueApplicants');
+  const dupEl = document.getElementById('dupApplicants');
+  totalEl.textContent = list.length;
+  const uniqueContacts = Object.keys(contactCount).length;
+  const dupCount = list.length - uniqueContacts;
+  uniqueEl.textContent = uniqueContacts;
+  dupEl.textContent = dupCount;
+
+  // 필터 적용
+  const fF = document.getElementById('filterFortune').value;
+  const fM = document.getElementById('filterMarketing').value;
+  const fD = document.getElementById('filterDup').value;
+  const fS = document.getElementById('filterSearch').value.trim().toLowerCase();
+
+  let filtered = list.filter(a => {
+    if (fF && a.fortune !== fF) return false;
+    if (fM && a.marketing !== fM) return false;
+    const c = (a.contact||'').replace(/\D/g,'');
+    const isDup = contactCount[c] > 1;
+    if (fD === 'dup' && !isDup) return false;
+    if (fD === 'unique' && isDup) return false;
+    if (fS) {
+      const hay = `${a.name||''} ${a.contact||''} ${a.email||''}`.toLowerCase();
+      if (!hay.includes(fS)) return false;
+    }
     return true;
   });
-  document.getElementById('tableCount').textContent=rows.length+'명';
-  const total=Math.ceil(rows.length/PER_PAGE)||1;
-  if(curPage>total)curPage=total;
-  const slice=rows.slice((curPage-1)*PER_PAGE,curPage*PER_PAGE);
-  const tbody=document.getElementById('tableBody');
-  if(!slice.length){tbody.innerHTML='<tr class="empty-row"><td colspan="7">응모 데이터가 없습니다</td></tr>';document.getElementById('paginationWrap').innerHTML='';return;}
-  tbody.innerHTML=slice.map(r=>`<tr>
-    <td class="td-no">${r.no}</td>
-    <td class="td-name">${esc(r.name)}</td>
-    <td>${esc(r.contact)}</td>
-    <td style="color:#8e8e93;">${esc(r.email)||'—'}</td>
-    <td class="td-fortune ${fcls[r.fortune]||''}">${esc(r.fortune)}</td>
-    <td class="td-marketing ${r.marketing==='동의'?'agree':'disagree'}">${esc(r.marketing)}</td>
-    <td class="td-time">${esc(r.time)}</td>
-  </tr>`).join('');
-  const pg=document.getElementById('paginationWrap');
-  if(total<=1){pg.innerHTML='';return;}
-  let h=`<button class="pg-btn" onclick="goPage(${curPage-1})" ${curPage===1?'disabled':''}>‹</button>`;
-  for(let i=1;i<=total;i++){
-    if(i===1||i===total||Math.abs(i-curPage)<=2)h+=`<button class="pg-btn ${i===curPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
-    else if(Math.abs(i-curPage)===3)h+=`<span class="pg-info">…</span>`;
+
+  const tbody = document.getElementById('tblBody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">조건에 맞는 응모자가 없어요</td></tr>';
+    return;
   }
-  h+=`<button class="pg-btn" onclick="goPage(${curPage+1})" ${curPage===total?'disabled':''}>›</button>`;
-  h+=`<span class="pg-info">${curPage}/${total} 페이지</span>`;
-  pg.innerHTML=h;
+  tbody.innerHTML = filtered.map((a, i) => {
+    const c = (a.contact||'').replace(/\D/g,'');
+    const isDup = contactCount[c] > 1;
+    const dupBadge = isDup ? `<span class="dup-badge">중복</span>` : '';
+    const fortuneBadge = a.fortune ? `<span class="fortune-badge fortune-${a.fortune}">${a.fortune}</span>` : '—';
+    const date = a.timestamp ? new Date(a.timestamp).toLocaleString('ko-KR', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<tr>
+      <td class="dim">${i+1}</td>
+      <td>${escapeHtml(a.name||'—')}${dupBadge}</td>
+      <td class="mono">${escapeHtml(a.contact||'—')}</td>
+      <td class="dim">${escapeHtml(a.email||'—')}</td>
+      <td>${fortuneBadge}</td>
+      <td class="dim">${escapeHtml(a.channel||'direct')}</td>
+      <td class="dim">${escapeHtml(a.marketing||'—')}</td>
+      <td class="dim mono">${date}</td>
+    </tr>`;
+  }).join('');
 }
 
-function goPage(p){curPage=p;renderTable();window.scrollTo({top:0,behavior:'smooth'});}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function toast(m,d=2500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
+// 필터 이벤트
+['filterFortune','filterMarketing','filterDup','filterSearch'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    if (lastData) renderApplicants(lastData.applicants || []);
+  });
+});
 
-setInterval(()=>{if(SCRIPT_URL)loadAll();},5*60*1000);
+// Enter 키로 로그인
+document.getElementById('adminKey').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+document.getElementById('scriptUrl').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
 </script>
 </body>
 </html>
