@@ -121,6 +121,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 /* Success */
 .success-page{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--black);z-index:999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 20px;gap:20px;overflow-y:auto;box-sizing:border-box;}
 .success-page.show{display:flex;}
+body.success-shown .site-footer{display:none;}
 .success-seal{font-family:'KyoboBatang','Shippori Mincho',serif;font-size:52px;color:var(--blood);opacity:.8;margin-bottom:8px;text-shadow:0 0 20px rgba(139,32,32,.4);}
 .success-title{font-family:'KyoboBatang','Shippori Mincho',serif;font-size:24px;letter-spacing:.2em;color:var(--paper);}
 .success-msg{font-size:13px;letter-spacing:.18em;color:var(--dim);line-height:2.3;}
@@ -149,6 +150,15 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
   transition:all .3s;margin-top:0;
 }
 .success-share-btn:hover{background:rgba(139,32,32,.18);color:var(--paper);}
+
+.success-farewell{
+  display:inline-block;
+  margin-top:6px;
+  color:#e8b4b4;
+  opacity:.95;
+  font-weight:600;
+  letter-spacing:.22em;
+}
 
 /* Dividers */
 .hero-line{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--blood),transparent);position:relative;margin-bottom:32px;}
@@ -180,7 +190,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 
   <div class="hero">
     <img src="assets/title.png" alt="신사 : 악귀의 속삭임" class="event-logo" onclick="window.open('https://litt.ly/theshrine_movie','_blank')" style="cursor:pointer;">
-    <p class="hero-badge">✦ SPECIAL EVENT · 2026년 6월 17일 CGV 대개봉 ✦</p>
+    <p class="hero-badge">✦ SPECIAL EVENT · 2026년 6월 17일 CGV 단독개봉 ✦</p>
     <p class="hero-sub">신사의 부름에 응한 자 중<br>운명이 선택한 한 사람에게</p>
   </div>
 
@@ -242,7 +252,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <p class="success-title">응모가 완료되었습니다</p>
     <p class="success-msg">
       신사가 당신을 기억했습니다.<br>
-      
+      <span class="success-farewell">내일 다시, 신사에서 만나요.</span>
     </p>
     <div>
       <p style="font-size:10px;letter-spacing:.3em;color:var(--grey);">당신의 운세</p>
@@ -255,7 +265,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
 </div>
 
 <footer class="site-footer">
-  <p><a href="https://m.site.naver.com/28BNi" target="_blank" style="text-decoration:none;letter-spacing:.3em;">〈 신사 : 악귀의 속삭임 〉</a> · 2026년 6월 17일 CGV 대개봉</p>
+  <p><a href="https://m.site.naver.com/28BNi" target="_blank" style="text-decoration:none;letter-spacing:.3em;">〈 신사 : 악귀의 속삭임 〉</a> · 2026년 6월 17일 CGV 단독개봉</p>
   <p style="margin-top:6px;font-size:11px;opacity:.95;color:var(--dim);">運命ハ既ニ決マッテイル</p>
 </footer>
 
@@ -344,6 +354,7 @@ async function submitForm() {
   document.getElementById('formWrap').style.display = 'none';
   document.getElementById('successFortune').textContent = fortune;
   document.getElementById('successPage').classList.add('show');
+  document.body.classList.add('success-shown');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
